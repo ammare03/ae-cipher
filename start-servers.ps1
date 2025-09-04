@@ -7,7 +7,7 @@ Write-Host ""
 
 # Start Python API in background
 Write-Host "Starting Python API server..." -ForegroundColor Green
-Start-Process -FilePath "python" -ArgumentList "cipher_api.py" -WindowStyle Normal
+Start-Process -FilePath "python" -ArgumentList "backend\cipher_api.py" -WindowStyle Normal
 
 # Wait a moment for API to start
 Start-Sleep -Seconds 3
