@@ -4,6 +4,13 @@ import { CipherComponent } from "@/components/cipher-component";
 import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { useTheme } from "@/components/theme-provider";
 import GradientBlinds from "@/components/bits/GradientBlinds";
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 
 function ThemeSwitcherWrapper() {
   const { theme, setTheme } = useTheme();
@@ -37,13 +44,70 @@ export default function Home() {
               <div className="h-6 w-6 rounded-sm bg-primary"></div>
               <span className="font-bold">AE Cipher</span>
             </div>
-            <ThemeSwitcherWrapper />
+            <div className="flex items-center space-x-4">
+              <SignedOut>
+                <div className="flex items-center space-x-2">
+                  <SignInButton mode="modal">
+                    <button className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                      Sign in
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+                      Sign up
+                    </button>
+                  </SignUpButton>
+                </div>
+              </SignedOut>
+              <SignedIn>
+                <div className="flex items-center space-x-4">
+                  <a
+                    href="/profile"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Profile
+                  </a>
+                  <UserButton afterSignOutUrl="/" />
+                </div>
+              </SignedIn>
+              <ThemeSwitcherWrapper />
+            </div>
           </div>
         </header>
 
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
-          <CipherComponent />
+          <SignedIn>
+            <CipherComponent />
+          </SignedIn>
+          <SignedOut>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+              <div className="max-w-md space-y-6">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold tracking-tighter">
+                    Welcome to AE Cipher
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Secure text encryption with multi-round password-based
+                    security. Sign in or create an account to start encrypting
+                    your text.
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <SignInButton mode="modal">
+                    <button className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
+                      Sign in to continue
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button className="px-6 py-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md transition-colors">
+                      Create account
+                    </button>
+                  </SignUpButton>
+                </div>
+              </div>
+            </div>
+          </SignedOut>
         </main>
 
         {/* Footer */}

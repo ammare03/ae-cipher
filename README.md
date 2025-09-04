@@ -5,6 +5,7 @@ A modern, user-friendly web application for encrypting and decrypting text using
 ## Features
 
 - 🔐 **Secure Encryption**: Multi-round password-based cipher with evolving keys
+- 🔒 **User Authentication**: Secure sign-in/sign-up with Clerk
 - 🌓 **Dark Mode**: Built-in theme switcher (light/dark/system)
 - 📋 **Copy to Clipboard**: Easy copying of encrypted/decrypted results
 - 🎨 **Modern UI**: Clean, responsive design using Tailwind CSS v4
@@ -15,6 +16,7 @@ A modern, user-friendly web application for encrypting and decrypting text using
 
 - **Frontend**: Next.js 15, React 19, TypeScript
 - **Backend**: Python FastAPI
+- **Authentication**: Clerk
 - **Styling**: Tailwind CSS v4
 - **UI Components**: ShadCN UI, KiboUI components
 - **Icons**: Lucide React
@@ -63,6 +65,20 @@ npm install
 ```bash
 pip install -r requirements.txt
 ```
+
+### 4. Set up Authentication
+
+1. Create a [Clerk account](https://clerk.com) and create a new application
+2. Copy your API keys from the [Clerk Dashboard](https://dashboard.clerk.com/last-active?path=api-keys)
+3. Create a `.env.local` file in the project root:
+
+```bash
+# Clerk Environment Variables
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key_here
+CLERK_SECRET_KEY=your_secret_key_here
+```
+
+Replace `your_publishable_key_here` and `your_secret_key_here` with your actual Clerk keys.
 
 ## Running the Application
 
