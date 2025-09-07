@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { encryptText, decryptText } from "@/lib/cipher";
 
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const { userId } = await auth();
-
+    
     if (!userId) {
       return NextResponse.json(
         { error: "Authentication required" },
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { text, password, operation } = body;
+    const { text, password, operation, rounds = 3 } = body;
 
     if (!text || !password || !operation) {
       return NextResponse.json(
@@ -23,23 +24,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Here you would call your Python backend
-    // For now, this is a placeholder that forwards to your existing backend
-    const backendResponse = await fetch("http://localhost:5000/cipher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text, password, operation }),
-    });
-
-    if (!backendResponse.ok) {
-      throw new Error("Backend service error");
+    if (rounds < 1) {
+      return NextResponse.json(
+        { error: "Rounds must be at least 1" },
+        { status: 400 }
+      );
     }
 
-    const result = await backendResponse.json();
-
-    return NextResponse.json(result);
+    let result;
+    
+    if (operation === 'encrypt') {
+      result = encryptText(text, password, rounds);
+      return NextResponse.json({ 
+        success: true, 
+        result,
+        operation: 'encrypt'
+      });
+    } else if (operation === 'decrypt') {
+      const { result: decryptedText, error } = decryptText(text, password, rounds);
+      if (error) {
+        return NextResponse.json({ 
+          success: false, 
+          error 
+        });
+      }
+      return NextResponse.json({ 
+        success: true, 
+        result: decryptedText,
+        operation: 'decrypt'
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Invalid operation. Must be 'encrypt' or 'decrypt'" },
+        { status: 400 }
+      );
+    }
+    
   } catch (error) {
     console.error("Cipher API error:", error);
     return NextResponse.json(

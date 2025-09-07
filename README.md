@@ -15,12 +15,13 @@ A modern, user-friendly web application for encrypting and decrypting text using
 ## Tech Stack
 
 - **Frontend**: Next.js 15, React 19, TypeScript
-- **Backend**: Python FastAPI
+- **Backend**: Next.js API Routes (TypeScript)
 - **Authentication**: Clerk
 - **Styling**: Tailwind CSS v4
 - **UI Components**: ShadCN UI, KiboUI components
 - **Icons**: Lucide React
 - **Animations**: Motion (Framer Motion)
+- **Deployment**: Vercel
 
 ## Project Structure
 
@@ -28,15 +29,25 @@ A modern, user-friendly web application for encrypting and decrypting text using
 ae-cipher/
 ├── src/
 │   ├── app/                  # Next.js app router
-│   ├── components/           # React components
-│   │   ├── ui/              # UI components (Button, Card, etc.)
+│   │   ├── api/             # API routes (cipher functionality)
+│   │   ├── profile/         # User profile page
+│   │   ├── layout.tsx       # Root layout with Clerk
+│   │   └── page.tsx         # Home page
+│   ├── components/          # React components
+│   │   ├── ui/             # UI components (Button, Card, etc.)
+│   │   ├── bits/           # Custom components (animations)
 │   │   ├── cipher-component.tsx
 │   │   └── theme-provider.tsx
-│   └── lib/
-│       └── utils.ts         # Utility functions
-├── AECipher.py              # Original Python cipher (CLI version)
-├── cipher_api.py            # FastAPI server
-├── requirements.txt         # Python dependencies
+│   ├── lib/                # Utilities and core logic
+│   │   ├── cipher.ts       # TypeScript cipher implementation
+│   │   ├── auth.ts         # Client-side auth utilities
+│   │   ├── auth-server.ts  # Server-side auth utilities
+│   │   └── utils.ts        # General utilities
+│   └── middleware.ts       # Clerk authentication middleware
+├── backend/                 # Original Python implementation (reference)
+│   ├── AECipher.py         # CLI version
+│   ├── cipher_api.py       # FastAPI server (deprecated)
+│   └── requirements.txt    # Python dependencies (deprecated)
 └── package.json            # Node.js dependencies
 ```
 
@@ -82,40 +93,40 @@ Replace `your_publishable_key_here` and `your_secret_key_here` with your actual 
 
 ## Running the Application
 
-You need to run both the Python API server and the Next.js frontend.
+The application now runs entirely on Next.js with TypeScript, so you only need to start one server.
 
-### Method 1: Manual (Two Terminals)
+### Development
 
-**Terminal 1 - Python API Server:**
-```bash
-python cipher_api.py
-```
-The API will be available at: `http://localhost:8000`
-
-**Terminal 2 - Next.js Frontend:**
 ```bash
 npm run dev
 ```
 The web app will be available at: `http://localhost:3000`
 
-### Method 2: Using Scripts (Recommended)
+### Production
 
-**For Windows PowerShell:**
-```powershell
-# Start both servers
-.\start-servers.ps1
-
-# Or start them individually:
-.\start-api.ps1     # Start Python API
-.\start-web.ps1     # Start Next.js web app
+```bash
+npm run build
+npm start
 ```
+
+### Deployment
+
+The application is ready for deployment on Vercel:
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add your environment variables in Vercel dashboard:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
+4. Deploy!
 
 ## Usage
 
-1. **Open the web app**: Navigate to `http://localhost:3000`
-2. **Set your password**: Enter a secure password in the settings
-3. **Choose rounds**: Set the number of encryption rounds (default: 3)
-4. **Encrypt text**: 
+1. **Open the web app**: Navigate to your application URL
+2. **Sign in/Sign up**: Create an account or sign in with Clerk
+3. **Set your password**: Enter a secure password for encryption
+4. **Choose rounds**: Set the number of encryption rounds (default: 3)
+5. **Encrypt text**: 
    - Enter your plaintext in the encryption panel
    - Click "Encrypt" to generate Base64 ciphertext
    - Copy the result using the copy button

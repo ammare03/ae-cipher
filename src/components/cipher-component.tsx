@@ -24,8 +24,8 @@ import DecryptedText from "@/components/bits/DecryptedText";
 
 interface CipherResponse {
   success: boolean;
-  ciphertext?: string;
-  plaintext?: string;
+  result?: string;
+  operation?: string;
   error?: string;
 }
 
@@ -63,28 +63,29 @@ export function CipherComponent() {
     setEncryptResult("");
 
     try {
-      const response = await fetch("http://localhost:8000/encrypt", {
+      const response = await fetch("/api/cipher", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          plaintext: plaintext.trim(),
+          text: plaintext.trim(),
           password: password.trim(),
+          operation: "encrypt",
           rounds: rounds,
         }),
       });
 
       const data: CipherResponse = await response.json();
 
-      if (data.success && data.ciphertext) {
-        setEncryptResult(data.ciphertext);
+      if (data.success && data.result) {
+        setEncryptResult(data.result);
       } else {
         setEncryptError(data.error || "Encryption failed");
       }
     } catch {
       setEncryptError(
-        "Failed to connect to cipher API. Please ensure the Python server is running on port 8000."
+        "Failed to connect to cipher API. Please try again."
       );
     } finally {
       setIsEncrypting(false);
@@ -102,28 +103,29 @@ export function CipherComponent() {
     setDecryptResult("");
 
     try {
-      const response = await fetch("http://localhost:8000/decrypt", {
+      const response = await fetch("/api/cipher", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ciphertext: ciphertext.trim(),
+          text: ciphertext.trim(),
           password: password.trim(),
+          operation: "decrypt",
           rounds: rounds,
         }),
       });
 
       const data: CipherResponse = await response.json();
 
-      if (data.success && data.plaintext !== undefined) {
-        setDecryptResult(data.plaintext);
+      if (data.success && data.result !== undefined) {
+        setDecryptResult(data.result);
       } else {
         setDecryptError(data.error || "Decryption failed");
       }
     } catch {
       setDecryptError(
-        "Failed to connect to cipher API. Please ensure the Python server is running on port 8000."
+        "Failed to connect to cipher API. Please try again."
       );
     } finally {
       setIsDecrypting(false);
