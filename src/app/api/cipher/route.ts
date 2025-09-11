@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: "Authentication required" },
@@ -15,7 +15,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { text, password, operation, rounds = 3 } = body;
+    const { 
+      text, 
+      password, 
+      operation, 
+      rounds = 3, 
+      use_pbr = true, 
+      block_size = 8 
+    } = body;
 
     if (!text || !password || !operation) {
       return NextResponse.json(
@@ -31,27 +38,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (block_size < 1) {
+      return NextResponse.json(
+        { error: "Block size must be at least 1" },
+        { status: 400 }
+      );
+    }
+
     let result;
-    
-    if (operation === 'encrypt') {
-      result = encryptText(text, password, rounds);
-      return NextResponse.json({ 
-        success: true, 
+
+    if (operation === "encrypt") {
+      result = encryptText(text, password, rounds, use_pbr, block_size);
+      return NextResponse.json({
+        success: true,
         result,
-        operation: 'encrypt'
+        operation: "encrypt",
+        settings: {
+          rounds,
+          use_pbr,
+          block_size
+        }
       });
-    } else if (operation === 'decrypt') {
-      const { result: decryptedText, error } = decryptText(text, password, rounds);
+    } else if (operation === "decrypt") {
+      const { result: decryptedText, error } = decryptText(
+        text,
+        password,
+        rounds,
+        use_pbr,
+        block_size
+      );
       if (error) {
-        return NextResponse.json({ 
-          success: false, 
-          error 
+        return NextResponse.json({
+          success: false,
+          error,
         });
       }
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         result: decryptedText,
-        operation: 'decrypt'
+        operation: "decrypt",
+        settings: {
+          rounds,
+          use_pbr,
+          block_size
+        }
       });
     } else {
       return NextResponse.json(
@@ -59,7 +89,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
   } catch (error) {
     console.error("Cipher API error:", error);
     return NextResponse.json(

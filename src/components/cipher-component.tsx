@@ -34,6 +34,8 @@ export function CipherComponent() {
   const [ciphertext, setCiphertext] = useState("");
   const [password, setPassword] = useState("");
   const [rounds, setRounds] = useState(3);
+  const [usePbr, setUsePbr] = useState(true);
+  const [blockSize, setBlockSize] = useState(8);
   const [encryptResult, setEncryptResult] = useState("");
   const [decryptResult, setDecryptResult] = useState("");
   const [isEncrypting, setIsEncrypting] = useState(false);
@@ -73,6 +75,8 @@ export function CipherComponent() {
           password: password.trim(),
           operation: "encrypt",
           rounds: rounds,
+          use_pbr: usePbr,
+          block_size: blockSize,
         }),
       });
 
@@ -84,9 +88,7 @@ export function CipherComponent() {
         setEncryptError(data.error || "Encryption failed");
       }
     } catch {
-      setEncryptError(
-        "Failed to connect to cipher API. Please try again."
-      );
+      setEncryptError("Failed to connect to cipher API. Please try again.");
     } finally {
       setIsEncrypting(false);
     }
@@ -113,6 +115,8 @@ export function CipherComponent() {
           password: password.trim(),
           operation: "decrypt",
           rounds: rounds,
+          use_pbr: usePbr,
+          block_size: blockSize,
         }),
       });
 
@@ -124,9 +128,7 @@ export function CipherComponent() {
         setDecryptError(data.error || "Decryption failed");
       }
     } catch {
-      setDecryptError(
-        "Failed to connect to cipher API. Please try again."
-      );
+      setDecryptError("Failed to connect to cipher API. Please try again.");
     } finally {
       setIsDecrypting(false);
     }
@@ -138,7 +140,7 @@ export function CipherComponent() {
       <div className="text-center space-y-2 mb-8">
         <h1 className="text-4xl font-bold tracking-tight">
           <DecryptedText
-            text="AE Cipher"
+            text="Enhanced AE Cipher"
             speed={80}
             maxIterations={20}
             sequential={true}
@@ -151,8 +153,8 @@ export function CipherComponent() {
           />
         </h1>
         <p className="text-muted-foreground text-lg">
-          Secure text encryption and decryption with multi-round password-based
-          cipher
+          Advanced encryption with PBR integration featuring multi-round, 
+          polyalphabetic substitution and block transposition
         </p>
       </div>
 
@@ -190,6 +192,40 @@ export function CipherComponent() {
                 onChange={(e) => setRounds(parseInt(e.target.value) || 1)}
               />
             </div>
+          </div>
+          
+          {/* PBR Enhancement Settings */}
+          <div className="border-t pt-4">
+            <div className="flex items-center justify-between mb-3">
+              <Label htmlFor="use-pbr" className="text-sm font-medium">
+                Enable PBR Enhancement
+              </Label>
+              <input
+                id="use-pbr"
+                type="checkbox"
+                checked={usePbr}
+                onChange={(e) => setUsePbr(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            
+            {usePbr && (
+              <div className="space-y-2">
+                <Label htmlFor="block-size">Block Size</Label>
+                <Input
+                  id="block-size"
+                  type="number"
+                  min="1"
+                  max="32"
+                  value={blockSize}
+                  onChange={(e) => setBlockSize(parseInt(e.target.value) || 8)}
+                  placeholder="8"
+                />
+                <p className="text-xs text-muted-foreground">
+                  PBR (Polyalphabetic Block-Reverse) adds polyalphabetic substitution and block transposition for enhanced security.
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

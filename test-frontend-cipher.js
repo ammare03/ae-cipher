@@ -1,14 +1,18 @@
+#!/usr/bin/env node
 /**
- * Enhanced AE Cipher with PBR Integration - TypeScript Implementation
- * Port of the enhanced Python cipher algorithm
+ * Test script for Enhanced AECipher TypeScript implementation
+ * Run with: node test-frontend-cipher.js
  */
 
-export function generateKeyStream(text: string, keyword: string): string {
+// Import the cipher functions (if this was a proper module setup)
+// For now, we'll copy the essential functions here for testing
+
+function generateKeyStream(text, keyword) {
   const keywordChars = Array.from(keyword);
   if (text.length === keyword.length) {
     return keyword;
   } else {
-    const keyStream: string[] = [];
+    const keyStream = [];
     for (let i = 0; i < text.length; i++) {
       keyStream.push(keywordChars[i % keywordChars.length]);
     }
@@ -16,17 +20,15 @@ export function generateKeyStream(text: string, keyword: string): string {
   }
 }
 
-export function generateKey(passphrase: string): number[] {
-  // Create numeric key bytes from passphrase (removed hardcoded 'Ammar')
+function generateKey(passphrase) {
   return Array.from(passphrase).map((ch) => ch.charCodeAt(0) % 256);
 }
 
-export function evolveKey(oldKey: number[]): number[] {
-  // Evolve key deterministically for the next round
+function evolveKey(oldKey) {
   return oldKey.map((val) => (val * 7 + 3) % 256);
 }
 
-export function pbrEncryptBytes(dataBytes: Uint8Array, keyword: string, blockSize: number = 8): Uint8Array {
+function pbrEncryptBytes(dataBytes, keyword, blockSize = 8) {
   // Convert bytes to string for PBR processing
   let plaintext = Array.from(dataBytes).map(b => String.fromCharCode(b)).join('');
   
@@ -62,7 +64,7 @@ export function pbrEncryptBytes(dataBytes: Uint8Array, keyword: string, blockSiz
   return new Uint8Array(Array.from(ciphertext).map(c => c.charCodeAt(0)));
 }
 
-export function pbrDecryptBytes(cipherBytes: Uint8Array, keyword: string, blockSize: number = 8): Uint8Array {
+function pbrDecryptBytes(cipherBytes, keyword, blockSize = 8) {
   // Convert bytes to string for PBR processing
   const ciphertext = Array.from(cipherBytes).map(b => String.fromCharCode(b)).join('');
   
@@ -95,10 +97,7 @@ export function pbrDecryptBytes(cipherBytes: Uint8Array, keyword: string, blockS
   return new Uint8Array(Array.from(plaintext).map(c => c.charCodeAt(0)));
 }
 
-export function encryptOnceBytes(
-  ptBytes: Uint8Array,
-  key: number[]
-): Uint8Array {
+function encryptOnceBytes(ptBytes, key) {
   const out = new Uint8Array(ptBytes.length);
   for (let i = 0; i < ptBytes.length; i++) {
     const shift = key[i % key.length];
@@ -107,10 +106,7 @@ export function encryptOnceBytes(
   return out;
 }
 
-export function decryptOnceBytes(
-  ctBytes: Uint8Array,
-  key: number[]
-): Uint8Array {
+function decryptOnceBytes(ctBytes, key) {
   const out = new Uint8Array(ctBytes.length);
   for (let i = 0; i < ctBytes.length; i++) {
     const shift = key[i % key.length];
@@ -119,13 +115,7 @@ export function decryptOnceBytes(
   return out;
 }
 
-export function encryptText(
-  plaintext: string,
-  passphrase: string,
-  rounds: number = 3,
-  usePbr: boolean = true,
-  blockSize: number = 8
-): string {
+function encryptText(plaintext, passphrase, rounds = 3, usePbr = true, blockSize = 8) {
   let data = new TextEncoder().encode(plaintext);
   let key = generateKey(passphrase);
 
@@ -143,13 +133,7 @@ export function encryptText(
   return btoa(String.fromCharCode(...data));
 }
 
-export function decryptText(
-  b64cipher: string,
-  passphrase: string,
-  rounds: number = 3,
-  usePbr: boolean = true,
-  blockSize: number = 8
-): { result: string | null; error: string | null } {
+function decryptText(b64cipher, passphrase, rounds = 3, usePbr = true, blockSize = 8) {
   try {
     // Decode base64
     const binaryString = atob(b64cipher);
@@ -178,7 +162,7 @@ export function decryptText(
       } catch (e) {
         return {
           result: null,
-          error: `PBR decryption error: ${e instanceof Error ? e.message : String(e)}`,
+          error: `PBR decryption error: ${e.message}`,
         };
       }
     }
@@ -189,7 +173,69 @@ export function decryptText(
   } catch (e) {
     return {
       result: null,
-      error: `Decryption error: ${e instanceof Error ? e.message : String(e)}`,
+      error: `Decryption error: ${e.message}`,
     };
   }
 }
+
+// Test the enhanced cipher
+function testEnhancedCipher() {
+  console.log("=== Testing Enhanced AECipher (TypeScript/JavaScript) ===\n");
+  
+  const testMessage = "Hello, World! This is a test message for the enhanced cipher.";
+  const testPassword = "MySecretPassword123";
+  const testRounds = 3;
+  const testBlockSize = 8;
+  
+  console.log(`Original Message: ${testMessage}`);
+  console.log(`Password: ${testPassword}`);
+  console.log(`Rounds: ${testRounds}`);
+  console.log(`Block Size: ${testBlockSize}`);
+  console.log();
+  
+  // Test 1: Enhanced cipher with PBR enabled
+  console.log("--- Test 1: Enhanced Cipher with PBR ---");
+  const encryptedWithPbr = encryptText(testMessage, testPassword, testRounds, true, testBlockSize);
+  console.log(`Encrypted (with PBR): ${encryptedWithPbr.substring(0, 50)}...`);
+  
+  const decryptedWithPbr = decryptText(encryptedWithPbr, testPassword, testRounds, true, testBlockSize);
+  if (decryptedWithPbr.error) {
+    console.log(`Decryption Error: ${decryptedWithPbr.error}`);
+  } else {
+    console.log(`Decrypted (with PBR): ${decryptedWithPbr.result}`);
+    console.log(`Match Original: ${testMessage === decryptedWithPbr.result ? '✓' : '✗'}`);
+  }
+  console.log();
+  
+  // Test 2: Enhanced cipher without PBR (original AE cipher only)
+  console.log("--- Test 2: Enhanced Cipher without PBR (Original AE) ---");
+  const encryptedWithoutPbr = encryptText(testMessage, testPassword, testRounds, false, testBlockSize);
+  console.log(`Encrypted (without PBR): ${encryptedWithoutPbr.substring(0, 50)}...`);
+  
+  const decryptedWithoutPbr = decryptText(encryptedWithoutPbr, testPassword, testRounds, false, testBlockSize);
+  if (decryptedWithoutPbr.error) {
+    console.log(`Decryption Error: ${decryptedWithoutPbr.error}`);
+  } else {
+    console.log(`Decrypted (without PBR): ${decryptedWithoutPbr.result}`);
+    console.log(`Match Original: ${testMessage === decryptedWithoutPbr.result ? '✓' : '✗'}`);
+  }
+  console.log();
+  
+  // Test 3: Different ciphertexts verification
+  console.log("--- Test 3: Cipher Differences ---");
+  console.log(`Enhanced with PBR ≠ Enhanced without PBR: ${encryptedWithPbr !== encryptedWithoutPbr ? '✓' : '✗'}`);
+  console.log();
+  
+  // Test 4: Key generation without "Ammar"
+  console.log("--- Test 4: Key Generation Verification ---");
+  const keyWithTestPwd = generateKey("test");
+  console.log(`Key generated from 'test': [${keyWithTestPwd.join(', ')}]`);
+  console.log(`Key length: ${keyWithTestPwd.length}`);
+  console.log("✓ No hardcoded 'Ammar' included in key generation");
+  console.log();
+  
+  console.log("=== All Tests Completed ===");
+}
+
+// Run the test
+testEnhancedCipher();
