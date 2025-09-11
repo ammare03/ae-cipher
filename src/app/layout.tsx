@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AE Cipher - Secure Text Encryption",
+  title: "AVS Cipher - Secure Text Encryption",
   description:
-    "Encrypt and decrypt text using the AE cipher with multi-round password-based security",
+    "Encrypt and decrypt text using the AVS cipher with multi-round password-based security",
 };
 
 export default function RootLayout({
@@ -31,7 +31,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ThemeProvider defaultTheme="system" storageKey="ae-cipher-theme">
+          <ThemeProvider defaultTheme="system" storageKey="avs-cipher-theme">
             {children}
           </ThemeProvider>
         </body>

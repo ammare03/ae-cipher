@@ -1,5 +1,5 @@
 /**
- * Enhanced AE Cipher with PBR Integration - TypeScript Implementation
+ * Enhanced AVS Cipher with PBR Integration - TypeScript Implementation
  * Port of the enhanced Python cipher algorithm
  */
 
@@ -146,7 +146,7 @@ export function encryptText(
     data = new Uint8Array(pbrEncryptBytes(data, passphrase, blockSize));
   }
 
-  // Apply multi-round AE cipher encryption
+  // Apply multi-round AVS cipher encryption
   for (let i = 0; i < rounds; i++) {
     data = new Uint8Array(encryptOnceBytes(data, key));
     key = evolveKey(key);
@@ -178,7 +178,7 @@ export function decryptText(
       keys.push(key);
     }
 
-    // Apply inverse AE cipher in reverse order
+    // Apply inverse AVS cipher in reverse order
     for (let i = keys.length - 1; i >= 0; i--) {
       data = new Uint8Array(decryptOnceBytes(data, keys[i]));
     }

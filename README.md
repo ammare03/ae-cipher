@@ -1,4 +1,4 @@
-# AE Cipher - Secure Text Encryption
+# AVS Cipher - Secure Text Encryption
 
 A modern, user-friendly web application for encrypting and decrypting text using a custom cipher algorithm with multi-round password-based security.
 
@@ -26,7 +26,7 @@ A modern, user-friendly web application for encrypting and decrypting text using
 ## Project Structure
 
 ```
-ae-cipher/
+avs-cipher/
 ├── src/
 │   ├── app/                  # Next.js app router
 │   │   ├── api/             # API routes (cipher functionality)
@@ -45,7 +45,7 @@ ae-cipher/
 │   │   └── utils.ts        # General utilities
 │   └── middleware.ts       # Clerk authentication middleware
 ├── backend/                 # Original Python implementation (reference)
-│   ├── AECipher.py         # CLI version
+│   ├── AVSCipher.py        # CLI version
 │   ├── cipher_api.py       # FastAPI server (deprecated)
 │   └── requirements.txt    # Python dependencies (deprecated)
 └── package.json            # Node.js dependencies
@@ -62,7 +62,7 @@ ae-cipher/
 ### 1. Clone and Navigate
 
 ```bash
-cd "c:\Users\Ammar\OneDrive\Documents\MCA - MPSTME\Semester 3\CS\Assignment1\ae-cipher"
+cd "c:\Users\Ammar\OneDrive\Documents\MCA - MPSTME\Semester 3\CS\Assignment1\avs-cipher"
 ```
 
 ### 2. Install Node.js Dependencies

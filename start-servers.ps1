@@ -1,5 +1,5 @@
 # Start both Python API and Next.js servers
-Write-Host "Starting AE Cipher application..." -ForegroundColor Green
+Write-Host "Starting AVS Cipher application..." -ForegroundColor Green
 Write-Host "This will start both the Python API server and Next.js web app" -ForegroundColor Yellow
 Write-Host "Python API: http://localhost:8000" -ForegroundColor Cyan
 Write-Host "Web App: http://localhost:3000" -ForegroundColor Cyan

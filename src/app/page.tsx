@@ -42,7 +42,7 @@ export default function Home() {
           <div className="container mx-auto flex h-14 items-center justify-between px-4">
             <div className="flex items-center space-x-2">
               <div className="h-6 w-6 rounded-sm bg-primary"></div>
-              <span className="font-bold">AE Cipher</span>
+              <span className="font-bold">AVS Cipher</span>
             </div>
             <div className="flex items-center space-x-4">
               <SignedOut>
@@ -85,7 +85,7 @@ export default function Home() {
               <div className="max-w-md space-y-6">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter">
-                    Welcome to AE Cipher
+                    Welcome to AVS Cipher
                   </h1>
                   <p className="text-muted-foreground">
                     Secure text encryption with multi-round password-based

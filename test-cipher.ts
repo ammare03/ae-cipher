@@ -6,7 +6,7 @@
 import { encryptText, decryptText } from "./src/lib/cipher";
 
 function testCipher() {
-  console.log("Testing AE Cipher TypeScript Implementation\n");
+  console.log("Testing AVS Cipher TypeScript Implementation\n");
 
   const testCases = [
     {

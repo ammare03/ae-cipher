@@ -25,7 +25,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "ae-cipher-theme",
+  storageKey = "avs-cipher-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(

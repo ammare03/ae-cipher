@@ -1,10 +1,10 @@
-# Backend - AE Cipher
+# Backend - AVS Cipher
 
-This directory contains the backend implementation of the AE Cipher application.
+This directory contains the backend implementation of the AVS Cipher application.
 
 ## Files
 
-- **`AECipher.py`** - Command-line cipher implementation with menu-driven interface
+- **`AVSCipher.py`** - Command-line cipher implementation with menu-driven interface
 - **`cipher_api.py`** - FastAPI REST API server that exposes cipher functionality
 - **`requirements.txt`** - Python dependencies for the backend
 - **`README.md`** - This file
@@ -23,7 +23,7 @@ This directory contains the backend implementation of the AE Cipher application.
 
 3. Or run the command-line interface:
    ```bash
-   python AECipher.py
+   python AVSCipher.py
    ```
 
 ## API Endpoints

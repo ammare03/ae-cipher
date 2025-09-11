@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced AECipher with PBR (Polyalphabetic Block-Reverse) Integration
+Enhanced AVSCipher with PBR (Polyalphabetic Block-Reverse) Integration
 - Combines multi-round encryption with polyalphabetic substitution and block transposition
 - Multi-round (default 3) with evolving keys derived from passphrase
 - Ciphertext is base64 so it's safe to copy/paste
@@ -100,7 +100,7 @@ def pbr_decrypt_bytes(cipher_bytes: bytes, keyword: str, block_size: int = 8):
 
 
 def encrypt_once_bytes(pt_bytes: bytes, key):
-    """Original AE cipher encryption with key evolution"""
+    """Original AVS cipher encryption with key evolution"""
     out = bytearray(len(pt_bytes))
     for i, b in enumerate(pt_bytes):
         shift = key[i % len(key)]
@@ -109,7 +109,7 @@ def encrypt_once_bytes(pt_bytes: bytes, key):
 
 
 def decrypt_once_bytes(ct_bytes: bytes, key):
-    """Original AE cipher decryption with key evolution"""
+    """Original AVS cipher decryption with key evolution"""
     out = bytearray(len(ct_bytes))
     for i, b in enumerate(ct_bytes):
         shift = key[i % len(key)]
@@ -118,7 +118,7 @@ def decrypt_once_bytes(ct_bytes: bytes, key):
 
 
 def encrypt_text(plaintext: str, passphrase: str, rounds: int = 3, use_pbr: bool = True, block_size: int = 8) -> str:
-    """Enhanced encryption combining AE cipher with optional PBR techniques"""
+    """Enhanced encryption combining AVS cipher with optional PBR techniques"""
     data = plaintext.encode('utf-8')
     key = generate_key(passphrase)
 
@@ -126,7 +126,7 @@ def encrypt_text(plaintext: str, passphrase: str, rounds: int = 3, use_pbr: bool
     if use_pbr:
         data = pbr_encrypt_bytes(data, passphrase, block_size)
 
-    # Apply multi-round AE cipher encryption
+    # Apply multi-round AVS cipher encryption
     for _ in range(rounds):
         data = encrypt_once_bytes(data, key)
         key = evolve_key(key)
@@ -135,7 +135,7 @@ def encrypt_text(plaintext: str, passphrase: str, rounds: int = 3, use_pbr: bool
 
 
 def decrypt_text(b64cipher: str, passphrase: str, rounds: int = 3, use_pbr: bool = True, block_size: int = 8):
-    """Enhanced decryption combining AE cipher with optional PBR techniques"""
+    """Enhanced decryption combining AVS cipher with optional PBR techniques"""
     try:
         data = base64.b64decode(b64cipher)
     except Exception as e:
@@ -148,7 +148,7 @@ def decrypt_text(b64cipher: str, passphrase: str, rounds: int = 3, use_pbr: bool
         key = evolve_key(key)
         keys.append(key)
 
-    # Apply inverse AE cipher in reverse order
+    # Apply inverse AVS cipher in reverse order
     for k in reversed(keys):
         data = decrypt_once_bytes(data, k)
 
@@ -196,7 +196,7 @@ def get_pbr_choice(prompt="Use PBR enhancement? (y/n, default=y): "):
 
 
 def main():
-    print("=== Enhanced AECipher with PBR Integration ===")
+    print("=== Enhanced AVSCipher with PBR Integration ===")
     while True:
         print("\nMenu:")
         print("1) Encrypt a message")

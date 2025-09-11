@@ -1,5 +1,5 @@
 """
-AE Cipher encryption/decryption utilities
+AVS Cipher encryption/decryption utilities
 """
 import base64
 
