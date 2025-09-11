@@ -74,32 +74,32 @@ def pbr_encrypt_bytes(data_bytes: bytes, keyword: str, block_size: int = 8):
     """Apply PBR encryption to bytes data"""
     # Convert bytes to string for PBR processing
     plaintext = ''.join(chr(b) for b in data_bytes)
-    
+
     # 0. Padding
     padding_char = '~'
     if len(plaintext) % block_size != 0:
         padding_needed = block_size - (len(plaintext) % block_size)
         plaintext += padding_char * padding_needed
-    
+
     # 1. Key Stream Generation
     key_stream = generate_key_stream(plaintext, keyword)
-    
+
     # 2. Polyalphabetic Substitution
     shifted_text = ""
     for i in range(len(plaintext)):
         plain_char_code = ord(plaintext[i])
         key_char_code = ord(key_stream[i])
-        
+
         # Shift based on the key character's ASCII value
         shifted_char_code = (plain_char_code + key_char_code) % 256
         shifted_text += chr(shifted_char_code)
-    
+
     # 3. Block Transposition (Reversal)
     ciphertext = ""
     for i in range(0, len(shifted_text), block_size):
         block = shifted_text[i:i+block_size]
         ciphertext += block[::-1]  # Reverse the block
-    
+
     # Convert back to bytes
     return bytes(ord(c) for c in ciphertext)
 
@@ -108,30 +108,30 @@ def pbr_decrypt_bytes(cipher_bytes: bytes, keyword: str, block_size: int = 8):
     """Apply PBR decryption to bytes data"""
     # Convert bytes to string for PBR processing
     ciphertext = ''.join(chr(b) for b in cipher_bytes)
-    
+
     # 1. Reverse the Block Transposition
     reversed_blocks_text = ""
     for i in range(0, len(ciphertext), block_size):
         block = ciphertext[i:i+block_size]
         reversed_blocks_text += block[::-1]
-    
+
     # 2. Key Stream Generation
     key_stream = generate_key_stream(reversed_blocks_text, keyword)
-    
+
     # 3. Reverse Polyalphabetic Substitution
     plaintext = ""
     for i in range(len(reversed_blocks_text)):
         cipher_char_code = ord(reversed_blocks_text[i])
         key_char_code = ord(key_stream[i])
-        
+
         # Shift back
         original_char_code = (cipher_char_code - key_char_code) % 256
         plaintext += chr(original_char_code)
-    
+
     # 4. Remove Padding
     padding_char = '~'
     plaintext = plaintext.rstrip(padding_char)
-    
+
     # Convert back to bytes
     return bytes(ord(c) for c in plaintext)
 
@@ -158,16 +158,16 @@ def encrypt_text(plaintext: str, passphrase: str, rounds: int = 3, use_pbr: bool
     """Enhanced encryption combining AE cipher with optional PBR techniques"""
     data = plaintext.encode('utf-8')
     key = generate_key(passphrase)
-    
+
     # Apply PBR encryption first if enabled
     if use_pbr:
         data = pbr_encrypt_bytes(data, passphrase, block_size)
-    
+
     # Apply multi-round AE cipher encryption
     for _ in range(rounds):
         data = encrypt_once_bytes(data, key)
         key = evolve_key(key)
-    
+
     return base64.b64encode(data).decode('ascii')
 
 
@@ -177,25 +177,25 @@ def decrypt_text(b64cipher: str, passphrase: str, rounds: int = 3, use_pbr: bool
         data = base64.b64decode(b64cipher)
     except Exception as e:
         return None, f"Base64 decode error: {e}"
-    
+
     # Build keys forward
     key = generate_key(passphrase)
     keys = [key]
     for _ in range(rounds - 1):
         key = evolve_key(key)
         keys.append(key)
-    
+
     # Apply inverse AE cipher in reverse order
     for k in reversed(keys):
         data = decrypt_once_bytes(data, k)
-    
+
     # Apply PBR decryption if it was used during encryption
     if use_pbr:
         try:
             data = pbr_decrypt_bytes(data, passphrase, block_size)
         except Exception as e:
             return None, f"PBR decryption error: {e}"
-    
+
     try:
         text = data.decode('utf-8')
     except Exception:
@@ -223,7 +223,7 @@ async def encrypt_endpoint(request: EncryptRequest):
                 status_code=400, detail="Block size must be at least 1")
 
         ciphertext = encrypt_text(
-            request.plaintext, request.password, request.rounds, 
+            request.plaintext, request.password, request.rounds,
             request.use_pbr, request.block_size)
         return EncryptResponse(success=True, ciphertext=ciphertext)
 

@@ -153,7 +153,7 @@ export function CipherComponent() {
           />
         </h1>
         <p className="text-muted-foreground text-lg">
-          Advanced encryption with PBR integration featuring multi-round, 
+          Advanced encryption with PBR integration featuring multi-round,
           polyalphabetic substitution and block transposition
         </p>
       </div>
@@ -193,7 +193,7 @@ export function CipherComponent() {
               />
             </div>
           </div>
-          
+
           {/* PBR Enhancement Settings */}
           <div className="border-t pt-4">
             <div className="flex items-center justify-between mb-3">
@@ -208,7 +208,7 @@ export function CipherComponent() {
                 className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
               />
             </div>
-            
+
             {usePbr && (
               <div className="space-y-2">
                 <Label htmlFor="block-size">Block Size</Label>
@@ -222,7 +222,8 @@ export function CipherComponent() {
                   placeholder="8"
                 />
                 <p className="text-xs text-muted-foreground">
-                  PBR (Polyalphabetic Block-Reverse) adds polyalphabetic substitution and block transposition for enhanced security.
+                  PBR (Polyalphabetic Block-Reverse) adds polyalphabetic
+                  substitution and block transposition for enhanced security.
                 </p>
               </div>
             )}

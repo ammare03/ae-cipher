@@ -12,7 +12,7 @@ export function generateKeyStream(text: string, keyword: string): string {
     for (let i = 0; i < text.length; i++) {
       keyStream.push(keywordChars[i % keywordChars.length]);
     }
-    return keyStream.join('');
+    return keyStream.join("");
   }
 }
 
@@ -26,73 +26,85 @@ export function evolveKey(oldKey: number[]): number[] {
   return oldKey.map((val) => (val * 7 + 3) % 256);
 }
 
-export function pbrEncryptBytes(dataBytes: Uint8Array, keyword: string, blockSize: number = 8): Uint8Array {
+export function pbrEncryptBytes(
+  dataBytes: Uint8Array,
+  keyword: string,
+  blockSize: number = 8
+): Uint8Array {
   // Convert bytes to string for PBR processing
-  let plaintext = Array.from(dataBytes).map(b => String.fromCharCode(b)).join('');
-  
+  let plaintext = Array.from(dataBytes)
+    .map((b) => String.fromCharCode(b))
+    .join("");
+
   // 0. Padding
-  const paddingChar = '~';
+  const paddingChar = "~";
   if (plaintext.length % blockSize !== 0) {
     const paddingNeeded = blockSize - (plaintext.length % blockSize);
     plaintext += paddingChar.repeat(paddingNeeded);
   }
-  
+
   // 1. Key Stream Generation
   const keyStream = generateKeyStream(plaintext, keyword);
-  
+
   // 2. Polyalphabetic Substitution
-  let shiftedText = '';
+  let shiftedText = "";
   for (let i = 0; i < plaintext.length; i++) {
     const plainCharCode = plaintext.charCodeAt(i);
     const keyCharCode = keyStream.charCodeAt(i);
-    
+
     // Shift based on the key character's ASCII value
     const shiftedCharCode = (plainCharCode + keyCharCode) % 256;
     shiftedText += String.fromCharCode(shiftedCharCode);
   }
-  
+
   // 3. Block Transposition (Reversal)
-  let ciphertext = '';
+  let ciphertext = "";
   for (let i = 0; i < shiftedText.length; i += blockSize) {
     const block = shiftedText.substring(i, i + blockSize);
-    ciphertext += block.split('').reverse().join(''); // Reverse the block
+    ciphertext += block.split("").reverse().join(""); // Reverse the block
   }
-  
+
   // Convert back to bytes
-  return new Uint8Array(Array.from(ciphertext).map(c => c.charCodeAt(0)));
+  return new Uint8Array(Array.from(ciphertext).map((c) => c.charCodeAt(0)));
 }
 
-export function pbrDecryptBytes(cipherBytes: Uint8Array, keyword: string, blockSize: number = 8): Uint8Array {
+export function pbrDecryptBytes(
+  cipherBytes: Uint8Array,
+  keyword: string,
+  blockSize: number = 8
+): Uint8Array {
   // Convert bytes to string for PBR processing
-  const ciphertext = Array.from(cipherBytes).map(b => String.fromCharCode(b)).join('');
-  
+  const ciphertext = Array.from(cipherBytes)
+    .map((b) => String.fromCharCode(b))
+    .join("");
+
   // 1. Reverse the Block Transposition
-  let reversedBlocksText = '';
+  let reversedBlocksText = "";
   for (let i = 0; i < ciphertext.length; i += blockSize) {
     const block = ciphertext.substring(i, i + blockSize);
-    reversedBlocksText += block.split('').reverse().join('');
+    reversedBlocksText += block.split("").reverse().join("");
   }
-  
+
   // 2. Key Stream Generation
   const keyStream = generateKeyStream(reversedBlocksText, keyword);
-  
+
   // 3. Reverse Polyalphabetic Substitution
-  let plaintext = '';
+  let plaintext = "";
   for (let i = 0; i < reversedBlocksText.length; i++) {
     const cipherCharCode = reversedBlocksText.charCodeAt(i);
     const keyCharCode = keyStream.charCodeAt(i);
-    
+
     // Shift back
     const originalCharCode = (cipherCharCode - keyCharCode + 256) % 256;
     plaintext += String.fromCharCode(originalCharCode);
   }
-  
+
   // 4. Remove Padding
-  const paddingChar = '~';
-  plaintext = plaintext.replace(new RegExp(`${paddingChar}+$`), '');
-  
+  const paddingChar = "~";
+  plaintext = plaintext.replace(new RegExp(`${paddingChar}+$`), "");
+
   // Convert back to bytes
-  return new Uint8Array(Array.from(plaintext).map(c => c.charCodeAt(0)));
+  return new Uint8Array(Array.from(plaintext).map((c) => c.charCodeAt(0)));
 }
 
 export function encryptOnceBytes(
@@ -178,7 +190,9 @@ export function decryptText(
       } catch (e) {
         return {
           result: null,
-          error: `PBR decryption error: ${e instanceof Error ? e.message : String(e)}`,
+          error: `PBR decryption error: ${
+            e instanceof Error ? e.message : String(e)
+          }`,
         };
       }
     }

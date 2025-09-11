@@ -15,13 +15,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { 
-      text, 
-      password, 
-      operation, 
-      rounds = 3, 
-      use_pbr = true, 
-      block_size = 8 
+    const {
+      text,
+      password,
+      operation,
+      rounds = 3,
+      use_pbr = true,
+      block_size = 8,
     } = body;
 
     if (!text || !password || !operation) {
@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
         settings: {
           rounds,
           use_pbr,
-          block_size
-        }
+          block_size,
+        },
       });
     } else if (operation === "decrypt") {
       const { result: decryptedText, error } = decryptText(
@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
         settings: {
           rounds,
           use_pbr,
-          block_size
-        }
+          block_size,
+        },
       });
     } else {
       return NextResponse.json(
